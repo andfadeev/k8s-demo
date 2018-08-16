@@ -43,7 +43,7 @@
 (defn home-page
   [request]
   (try
-    (->> "http://flock-microservice:8080/"
+    (->> "http://flock-microservice/"
          (client/get)
          :body
          (str "http://flock-microservice/ says: ")
@@ -56,7 +56,7 @@
   (->> (range 10)
        (map-fn
          (fn [x]
-           (let [res [x (-> (client/get "http://flock-microservice:8080/job"
+           (let [res [x (-> (client/get "http://flock-microservice/job"
                                         {:headers headers})
                             :body
                             (str))]]
@@ -152,4 +152,3 @@
                                         ;:key-password "password"
                                         ;:ssl-port 8443
                                         :ssl? false}})
-

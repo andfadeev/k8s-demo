@@ -1,0 +1,17 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: flock-istio-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "api.flocktory.com"
+    - flock-api.default.svc.cluster.local
+    - "micro.flocktory.internal"
+    - flock-microservice.default.svc.cluster.local

@@ -5,6 +5,9 @@ metadata:
 spec:
   hosts:
   - flock-microservice
+  - "micro.flocktory.internal"
+  gateways:
+  - flock-istio-gateway
   http:
   - route:
     - destination:

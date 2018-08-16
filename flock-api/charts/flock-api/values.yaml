@@ -6,7 +6,6 @@ replicaCount: 1
 
 image:
   repository: flock-api
-  tag: 0.8
   pullPolicy: IfNotPresent
 
 service:

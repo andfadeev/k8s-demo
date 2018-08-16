@@ -102,8 +102,8 @@ Deploy canary version:
 --set image.tag=v1 \
 --set canary.enabled=true \
 --set canary.image.tag=v4 \
---set weight=50 \
---set canary.weight=50
+--set weight=0 \
+--set canary.weight=100
 ```
 
 Exec into pod and check traffic shifting:
@@ -121,9 +121,33 @@ Try timeouts:
 ~> while true; do sleep 1; wget -q -O- http://flock-microservice/job; echo ''; done
 ```
 
-Start requests in loop:
+## Build and deploy `flock-api`
+
 ```bash
-~> while true; do sleep 1; curl -G http://192.168.99.101:31253/uuid; echo ''; done
+~> docker build -t flock-api:v1 flock-api/
+```
+
+Deploy with `helm`:
+
+```bash
+~> helm upgrade -i flock-api flock-api/charts/flock-api \
+--set image.tag=v1
+```
+
+
+
+Create `istio` ingressgateway:
+```bash
+~> kubectl apply -f istio-ingress.yaml
+```
+
+Run requests:
+```bash
+~> while true; do sleep 1; curl -G -HHost:micro.flocktory.internal http://192.168.99.101:31380/uuid; echo ''; done
+~> while true; do sleep 1; curl -G -HHost:flock-microservice.default.svc.cluster.local http://192.168.99.101:31380/uuid; echo ''; done
+~> while true; do sleep 1; curl -G -HHost:api.flocktory.com http://192.168.99.101:31380/parallel-requests; echo ''; done
+~> while true; do sleep 1; curl -G -HHost:api.flocktory.com http://192.168.99.101:31380/sequential-requests; echo ''; done
+
 ```
 
 
