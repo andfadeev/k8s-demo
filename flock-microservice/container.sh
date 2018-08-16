@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+: ${FLOCK_MICROSERVICE_TAG?"Need to set FLOCK_MICROSERVICE_TAG"}
+
+set -ex
+#TAG=0.1
+CONTAINER_IMAGE=flock-microservice
+CONTAINER_IMAGE_BUILT=${CONTAINER_IMAGE}:${FLOCK_MICROSERVICE_TAG}
+docker build -t ${CONTAINER_IMAGE_BUILT} .
+
+echo "Built:" ${FLOCK_MICROSERVICE_TAG}

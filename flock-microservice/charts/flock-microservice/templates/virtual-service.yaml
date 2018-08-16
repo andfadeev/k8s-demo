@@ -1,0 +1,22 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: flock-microservice
+spec:
+  hosts:
+  - flock-microservice
+  http:
+  - route:
+    - destination:
+        host: flock-microservice
+        subset: stable
+      weight: {{ .Values.weight | default 100 }}
+    {{- if .Values.canary.enabled}}
+    - destination:
+        host: flock-microservice
+        subset: canary
+      weight: {{ .Values.canary.weight }}
+    {{- end}}
+    {{- if .Values.timeout }}
+    timeout: {{ .Values.timeout }}
+    {{- end}}

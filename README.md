@@ -65,13 +65,70 @@ Check `istio` gateway:
 ~> kubectl describe service istio-ingressgateway -n istio-system
 ```
 
-Change `istio` servicegraph (https://istio.io/docs/tasks/telemetry/servicegraph/) service type:
+Change `istio` servicegraph (https://istio.io/docs/tasks/telemetry/servicegraph/) service type to `NodePort` and browse to:
 
 - `/force/forcegraph.html` As explored above, this is an interactive D3.js visualization.
 - `/dotviz` is a static Graphviz visualization.
 - `/dotgraph` provides a DOT serialization.
 - `/d3graph` provides a JSON serialization for D3 visualization.
 - `/graph` provides a generic JSON serialization.
+
+## Build and deploy `flock-microservice`
+
+Connect docker deamon to minikube (just to simplify local deployment):
+```bash
+~> eval $(minikube docker-env)
+```
+
+Build `flock-microservice` container:
+```bash
+~> docker build -t flock-microservice:v3 flock-microservice/
+```
+
+Deploy with `helm`:
+```bash
+~> helm upgrade -i flock-microservice flock-microservice/charts/flock-microservice \
+--set image.tag=v4
+```
+
+Now we can:
+- check pod, deployment, service and virtualservice
+- delete pod
+- rollback helm release
+
+Deploy canary version:
+```bash
+~> helm upgrade -i flock-microservice flock-microservice/charts/flock-microservice \
+--set image.tag=v1 \
+--set canary.enabled=true \
+--set canary.image.tag=v4 \
+--set weight=50 \
+--set canary.weight=50
+```
+
+Exec into pod and check traffic shifting:
+```bash
+~> kubectl exec flock-microservice-c4cf7fcb5-v2sv2 -ti bash
+~> while true; do sleep 1; wget -q -O- http://flock-microservice/uuid; echo ''; done
+```
+
+Try timeouts:
+```bash
+~> helm upgrade -i flock-microservice flock-microservice/charts/flock-microservice \
+--set image.tag=v4 \
+--set timeout=10ms
+~> kubectl exec flock-microservice-c4cf7fcb5-v2sv2 -ti bash
+~> while true; do sleep 1; wget -q -O- http://flock-microservice/job; echo ''; done
+```
+
+Start requests in loop:
+```bash
+~> while true; do sleep 1; curl -G http://192.168.99.101:31253/uuid; echo ''; done
+```
+
+
+
+
 
 
 

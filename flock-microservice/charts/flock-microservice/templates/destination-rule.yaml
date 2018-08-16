@@ -1,0 +1,13 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: flock-microservice-destination
+spec:
+  host: flock-microservice
+  subsets:
+  - name: canary
+    labels:
+      track: canary
+  - name: stable
+    labels:
+      track: stable
