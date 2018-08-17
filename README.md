@@ -134,8 +134,6 @@ Deploy with `helm`:
 --set image.tag=v1
 ```
 
-
-
 Create `istio` ingressgateway:
 ```bash
 ~> kubectl apply -f istio-ingress.yaml
@@ -149,12 +147,3 @@ Run requests:
 ~> while true; do sleep 1; curl -G -HHost:api.flocktory.com http://192.168.99.101:31380/sequential-requests; echo ''; done
 
 ```
-
-
-
-
-
-
-
-
-## Canary deploys
